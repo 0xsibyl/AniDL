@@ -6,6 +6,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![GitHub stars](https://img.shields.io/github/stars/0xsibyl/AniDL?style=social)
 
+
 [项目地址](https://github.com/0xsibyl/AniDL)
 
 ## 项目简介
