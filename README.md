@@ -1,5 +1,13 @@
 # AniDL
 
+
+![AniDL Version](https://img.shields.io/badge/AniDL-v1.0-blue)
+![Dev Version](https://img.shields.io/badge/Dev%20Version-dev-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
+![GitHub stars](https://img.shields.io/github/stars/0xsibyl/AniDL?style=social)
+
+[项目地址](https://github.com/0xsibyl/AniDL)
+
 ## 项目简介
 
 AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资源的获取,但是觉得很麻烦,为什么不能自动化下载这些里番视频,才开发了此项目。
