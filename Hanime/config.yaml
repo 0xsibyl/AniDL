@@ -1,0 +1,32 @@
+# config.yaml
+
+log_directory: 'log'
+log_file_prefix: 'data'
+null_log_file_prefix: 'null_vide'
+log_max_bytes: 5242880  # 5 MB
+log_backup_count: 2
+
+database:
+  host: 'localhost'
+  user: 'root'
+  password: '123456'
+  name: 'downloaded_videos'
+
+elasticsearch:
+  host: 'http://localhost:32774/'
+  port: 9200
+  index: 'articles'
+  doc_type: 'article'
+  username: 'elastic'
+  password: '*EeGyWQGLKOxX=h00V5V'
+
+crawler:
+  default_url: 'https://hanime1.me/search?genre=%E8%A3%8F%E7%95%AA'
+  start_page: 1
+  max_retries: 10
+  download_path: 'E:/vide'
+
+program_info:
+  name: 'Hanime Crawler'
+  version: '1.0.0'
+  author: 'Your Name'
