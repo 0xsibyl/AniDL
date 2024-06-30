@@ -33,7 +33,7 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 1. 克隆仓库到本地：
 
     ```bash
-    git clone https://github.com/yourusername/yourrepo.git
+    git clone https://github.com/0xsibyl/AniDL
     cd micrawler
     ```
 
@@ -91,7 +91,7 @@ AniDL/
 │   └── crawler.py            # 爬虫主模块
 │   └── database_utils.py     # 数据库模块
 │   └── signal_handler.py	  # 中断模块
-│   └── video_downloader.py   # 中断模块
+│   └── video_downloader.py   # 视频下载模块
 └──             
 ```
 
