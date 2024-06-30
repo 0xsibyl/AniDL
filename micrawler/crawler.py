@@ -30,9 +30,10 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
         if div1:
             div2 = div1.ele('.home-rows-videos-wrapper' if genre == 'li' else '.row no-gutter')
             if div2:
-                data = div2.eles('tag:a') if genre == 'li' else page.ele('#home-rows-wrapper').ele('.row no-gutter').eles('.col-xs-6 col-sm-4 col-md-2 '
-                                                                                 'search-doujin-videos hidden-xs '
-                                                                                 'hover-lighter multiple-link-wrapper')
+                data = div2.eles('tag:a') if genre == 'li' else page.ele('#home-rows-wrapper').ele(
+                    '.row no-gutter').eles('.col-xs-6 col-sm-4 col-md-2 '
+                                           'search-doujin-videos hidden-xs '
+                                           'hover-lighter multiple-link-wrapper')
                 if not data:
                     print(f'第 {page_number} 页没有数据，可能已经是最后一页了。')
                     break
@@ -40,7 +41,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                 for i in data:
                     try:
                         img = i('t:img').attr('src') if genre == 'li' else \
-                        i.ele('.card-mobile-panel inner').eles('t:img')[1].link
+                            i.ele('.card-mobile-panel inner').eles('t:img')[1].link
                         title = i.text if genre == 'li' else i.ele('.card-mobile-title').texts()
                         link = i.href if genre == 'li' else i.ele('t:a').link
                         page2.get(link)

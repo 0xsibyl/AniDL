@@ -90,7 +90,7 @@ AniDL/
 │   └── config_loader.py      # 读取配置文件
 │   └── crawler.py            # 爬虫主模块
 │   └── database_utils.py     # 数据库模块
-│   └── signal_handler.py	  # 中断模块
+│   └── signal_handler.py     # 中断模块
 │   └── video_downloader.py   # 视频下载模块
 └──             
 ```
