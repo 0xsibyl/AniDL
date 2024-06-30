@@ -21,7 +21,9 @@ elasticsearch:
   password: '*EeGyWQGLKOxX=h00V5V'
 
 crawler:
-  default_url: 'https://hanime1.me/search?genre=%E8%A3%8F%E7%95%AA'
+  li_default_url: 'https://hanime1.me/search?genre=%E8%A3%8F%E7%95%AA'
+  motion_default_url_2d: 'https://hanime1.me/search?genre=Motion+Anime'
+  motion_default_url_3d: 'https://hanime1.me/search?genre=3D%E5%8B%95%E7%95%AB'
   start_page: 1
   max_retries: 10
   download_path: 'E:/vide'
@@ -29,4 +31,4 @@ crawler:
 program_info:
   name: 'Hanime Crawler'
   version: '1.0.0'
-  author: 'Your Name'
+  author: 'S^^K'

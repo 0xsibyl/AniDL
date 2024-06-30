@@ -53,7 +53,7 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 
 2. 配置文件：
 
-    在 `config.json` 中，你可以设置需要爬取的网站列表、存储路径等参数。
+    在 `config.json` 中，你可以设置需要爬取的网站列表、存储路径等参数（v2.0在开发）。
 
     ```json
     {
@@ -79,15 +79,19 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 ## 文件结构
 
 ```plaintext
-yourrepo/
+AniDL/
 │
-├── README.md            # 项目介绍文档
-├── requirements.txt     # 依赖列表
-├── config.json          # 配置文件
-├── main.py              # 主爬虫程序
-├── utils/               # 工具模块
-│   └── parser.py        # 数据解析模块
-└── data/                # 数据存储文件夹
+├── README.md                 # 项目介绍文档      
+├── main.py                   # 程序入口
+├── /micrawler                # 源代码
+│   └── /log                  # 日志
+│   └── config.yaml           # 配置文件
+│   └── config_loader.py      # 读取配置文件
+│   └── crawler.py            # 爬虫主模块
+│   └── database_utils.py     # 数据库模块
+│   └── signal_handler.py	  # 中断模块
+│	└── video_downloader.py   # 中断模块
+└──             
 ```
 
 ## 贡献指南
