@@ -34,12 +34,13 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 
     ```bash
     git clone https://github.com/yourusername/yourrepo.git
-    cd yourrepo
+    cd micrawler
     ```
 
 2. 安装依赖：
 
     ```bash
+    pip install DrissionPage
     pip install -r requirements.txt
     ```
 
@@ -90,7 +91,7 @@ AniDL/
 │   └── crawler.py            # 爬虫主模块
 │   └── database_utils.py     # 数据库模块
 │   └── signal_handler.py	  # 中断模块
-│	└── video_downloader.py   # 中断模块
+│   └── video_downloader.py   # 中断模块
 └──             
 ```
 
