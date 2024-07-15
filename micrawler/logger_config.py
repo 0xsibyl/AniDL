@@ -1,18 +1,19 @@
 import os
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 
 
-def configure_logging(log_directory, log_file, log_max_bytes, log_backup_count):
+def configure_logging(log_directory, log_file_prefix, log_when, log_interval, log_backup_count):
     os.makedirs(log_directory, exist_ok=True)
-    log_file_path = os.path.join(log_directory, log_file)
+    log_file_path = os.path.join(log_directory, log_file_prefix)
 
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
             logging.StreamHandler(),
-            RotatingFileHandler(log_file_path, maxBytes=log_max_bytes, backupCount=log_backup_count)
+            TimedRotatingFileHandler(log_file_path, when=log_when, interval=log_interval, backupCount=log_backup_count,
+                                     encoding='utf-8', utc=True)
         ]
     )
     logging.info("日志记录已启动.")
@@ -21,3 +22,14 @@ def configure_logging(log_directory, log_file, log_max_bytes, log_backup_count):
 
 def log_message(message):
     logging.info(message)
+
+
+# 使用示例
+log_directory = 'log'
+log_file_prefix = 'data.log'
+log_when = 'midnight'  # 每天生成一个新文件
+log_interval = 1
+log_backup_count = 7  # 保留最近7天的日志
+
+configure_logging(log_directory, log_file_prefix, log_when, log_interval, log_backup_count)
+log_message("这是一个测试日志消息。")

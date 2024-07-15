@@ -50,10 +50,18 @@ def check_error_log(cursor, vide_id):
     try:
         cursor.execute("SELECT COUNT(1) FROM error_log WHERE vide_id = %s", vide_id)
         if cursor.fetchone()[0]:
-            print(f"vide_id {vide_id} 已存在于错误数据库中，正在重新下载。")
+            print(f"vide_id {vide_id} 已存在于错误数据库中。")
             return True
         else:
             return False
     except MySQLError as e:
         print(f"数据库操作时发生错误: {e}")
         return True
+
+
+def update_video_status(cursor, vide_id):
+    try:
+        cursor.execute("INSERT INTO sys_mi (vide_id, error_vide) VALUES (%s, %s)", (vide_id, error_code))
+        print(f"vide_id {vide_id} 已插入到数据库中。")
+    except MySQLError as e:
+        print(f"插入 vide_id 时发生错误: {e}")

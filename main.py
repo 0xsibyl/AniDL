@@ -1,7 +1,8 @@
 import os
 import signal
 import sys
-
+import json
+from datetime import datetime
 from micrawler.config_loader import load_config
 from micrawler.crawler import li_crawling, motion_crawling
 from micrawler.database_utils import connect_to_db
@@ -18,6 +19,7 @@ config = load_config('micrawler/config.yaml')
 logging_enabled = False
 write_to_db = False
 write_to_es = False
+write_to_file = False
 start_page = 1  # 默认从第一页开始爬取
 default_li_url = config['crawler']['li_default_url']
 default_2d_url = config['crawler']['motion_default_url_2d']
@@ -27,7 +29,7 @@ base_url = None
 
 
 def main():
-    global logging_enabled, write_to_db, write_to_es, start_page, base_url, crawler_type
+    global logging_enabled, write_to_db, write_to_es, write_to_file, start_page, base_url, crawler_type
 
     while True:
         print("\n" + "=" * 60)
@@ -41,7 +43,8 @@ def main():
         print("5. 选择爬取类型 (1: 里番, 2: 2.5D 动画, 3: 3D 动画)")
         print("6. 开始爬取")
         print("7. 退出")
-        choice = input("请选择 (1-7): ").strip()
+        print("8. 将 JSON 数据写入文件")
+        choice = input("请选择 (1-8): ").strip()
 
         if choice == '1':
             logging_enabled = configure_logging(
@@ -81,16 +84,20 @@ def main():
             connection = connect_to_db(config['database'])
             cursor = connection.cursor()
             if crawler_type == 'li':
-                li_crawling(base_url, start_page, config['database'], config['crawler'], write_to_es, None)
+                li_crawling(base_url, start_page, config['database'], config['crawler'], write_to_es, None,
+                            write_to_file)
             else:
-                motion_crawling(base_url, start_page, config['database'], config['crawler'], write_to_es, None, crawler_type)
+                motion_crawling(base_url, start_page, config['database'], config['crawler'], write_to_es, None,
+                                crawler_type, write_to_file)
             cursor.close()
             connection.close()
         elif choice == '7':
             print("退出程序.")
             break
+        elif choice == '8':
+            write_to_file = input("是否将 JSON 数据写入文件 (y/n): ").strip().lower() == 'y'
         else:
-            print("无效选项，请输入1-7之间的数字。")
+            print("无效选项，请输入1-8之间的数字。")
 
 
 if __name__ == "__main__":

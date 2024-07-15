@@ -64,7 +64,7 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
             "https://anotherexample.com"
         ],
         "output_format": "csv",
-        "output_path": "./data"
+        "output_path": "./data.log"
     }
     ```
 

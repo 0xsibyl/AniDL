@@ -7,9 +7,10 @@ from colorama import Fore, Style
 from prettytable import PrettyTable
 from database_utils import log_error_to_db, connect_to_db
 from video_downloader import download_video
+from write_json_to_file import write_json_to_file
 
 
-def crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, genre):
+def crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, genre, write_to_file):
     # 配置 ChromiumPage
     co = ChromiumOptions().auto_port()
     page = ChromiumPage(co)
@@ -76,7 +77,8 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                             connection = connect_to_db(database_config)
                             cursor = connection.cursor()
                             save_path = f"{crawler_config['download_path']}/{v_value}.mp4"
-                            download_video(best_quality_link, save_path, v_value, crawler_config['max_retries'], cursor, connection)
+                            download_video(best_quality_link, save_path, title, crawler_config['max_retries'], cursor,
+                                           connection) ##这个要写上标签名字
                             cursor.close()
                             connection.close()
                         else:
@@ -98,7 +100,8 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                             {"番剧名称": full_title, "作者": author.text, "番剧URL": link, "图片地址": img,
                              "下载地址": best_quality_link}, ensure_ascii=False, indent=4)
                         print(json_data)
-
+                        if write_to_file:
+                            write_json_to_file(json_data)  ##开启JSON文件
                         if write_to_es:
                             es_data = {'title': full_title, 'url': link, 'image_url': img}
                             es.index(index='anime_data', body=es_data)
@@ -127,9 +130,10 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
     page3.quit()
 
 
-def li_crawling(base_url, start_page, database_config, crawler_config, write_to_es, es):
-    crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, 'li')
+def li_crawling(base_url, start_page, database_config, crawler_config, write_to_es, es, write_to_file):
+    crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, 'li', write_to_file)
 
 
-def motion_crawling(base_url, start_page, database_config, crawler_config, write_to_es, es, crawler_type):
-    crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, crawler_type)
+def motion_crawling(base_url, start_page, database_config, crawler_config, write_to_es, es, crawler_type,
+                    write_to_file):
+    crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, crawler_type, write_to_file)

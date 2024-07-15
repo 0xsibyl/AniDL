@@ -1,7 +1,7 @@
 # config.yaml
 
-log_directory: 'log'
-log_file_prefix: 'data'
+log_directory: 'micrawler/log'
+log_file_prefix: 'data.log'
 null_log_file_prefix: 'null_vide'
 log_max_bytes: 5242880  # 5 MB
 log_backup_count: 2
