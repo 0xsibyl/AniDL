@@ -44,6 +44,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                         img = i('t:img').attr('src') if genre == 'li' else \
                             i.ele('.card-mobile-panel inner').eles('t:img')[1].link
                         title = i.text if genre == 'li' else i.ele('.card-mobile-title').text
+                        print(title)
                         link = i.href if genre == 'li' else i.ele('t:a').link
                         page2.get(link)
                         hanime1_div = page2.ele('#content-div').ele('#player-div-wrapper')
@@ -89,21 +90,21 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                             cursor.close()
                             connection.close()
 
-                        full_title = f"{title} [v={v_value}]"
-                        table.add_row([full_title, link, img])
-                        print(Fore.CYAN + Style.BRIGHT + f'番剧名称: {full_title}')
+                        fulul_title = f"{title} [v={v_value}]"
+                        table.add_row([fulul_title, link, img])
+                        print(Fore.CYAN + Style.BRIGHT + f'番剧名称: {fulul_title}')
                         print(f'番剧URL: {link}')
                         print(f'图片地址: {img}')
                         print('-' * 50)
 
                         json_data = json.dumps(
-                            {"番剧名称": full_title, "作者": author.text, "番剧URL": link, "图片地址": img,
+                            {"番剧名称": fulul_title, "作者": author.text, "番剧URL": link, "图片地址": img,
                              "下载地址": best_quality_link}, ensure_ascii=False, indent=4)
                         print(json_data)
                         if write_to_file:
                             write_json_to_file(json_data)  ##开启JSON文件
                         if write_to_es:
-                            es_data = {'title': full_title, 'url': link, 'image_url': img}
+                            es_data = {'title': fulul_title, 'url': link, 'image_url': img}
                             es.index(index='anime_data', body=es_data)
                             print(f'数据已写入 Elasticsearch: {es_data}')
 
