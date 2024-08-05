@@ -5,7 +5,6 @@ import json
 from datetime import datetime
 from micrawler.config_loader import load_config
 from micrawler.crawler import li_crawling, motion_crawling
-from micrawler.database_utils import connect_to_db
 from micrawler.logger_config import configure_logging
 from micrawler.signal_handler import signal_handler
 
@@ -50,7 +49,8 @@ def main():
             logging_enabled = configure_logging(
                 config['log_directory'],
                 config['log_file_prefix'],
-                config['log_max_bytes'],
+                config['log_when'],
+                config['log_interval'],
                 config['log_backup_count']
             )
         elif choice == '2':
@@ -81,16 +81,14 @@ def main():
             if crawler_type is None:
                 print("请先选择爬取类型。")
                 continue
-            connection = connect_to_db(config['database'])
-            cursor = connection.cursor()
+
             if crawler_type == 'li':
                 li_crawling(base_url, start_page, config['database'], config['crawler'], write_to_es, None,
                             write_to_file)
             else:
                 motion_crawling(base_url, start_page, config['database'], config['crawler'], write_to_es, None,
                                 crawler_type, write_to_file)
-            cursor.close()
-            connection.close()
+
         elif choice == '7':
             print("退出程序.")
             break

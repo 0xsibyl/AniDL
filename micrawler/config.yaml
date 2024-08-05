@@ -1,10 +1,11 @@
 # config.yaml
 
 log_directory: 'micrawler/log'
-log_file_prefix: 'data.log'
-null_log_file_prefix: 'null_vide'
-log_max_bytes: 5242880  # 5 MB
+log_file_prefix: 'service.log'  # 这里的前缀保持为 'service.log'
+log_when: 'midnight'            # 例如 'midnight', 'D' (每天), 'H' (每小时) 等
+log_interval: 1                 # 间隔
 log_backup_count: 2
+
 
 database:
   host: 'localhost'
