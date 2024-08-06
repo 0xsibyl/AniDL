@@ -1,6 +1,8 @@
 class Video:
     def __init__(self, id=None, title=None, video_url=None, thumbnail_url=None, description=None, tags=None,
-                 status=None):
+                 status=None, save_path=None, download_path=None):
+        self._download_path = download_path
+        self._save_path = save_path
         self._id = id
         self._title = title
         self._video_url = video_url
@@ -72,22 +74,18 @@ class Video:
     def status(self, value):
         self._status = value
 
+    @property
+    def save_path(self):
+        return self._save_path
 
-# Example usage
-video = Video()
-video.id = 1
-video.title = "Sample Video"
-video.video_url = "http://example.com/video.mp4"
-video.thumbnail_url = "http://example.com/thumbnail.jpg"
-video.description = "This is a sample video."
-video.tags = ["sample", "video"]
-video.status = "published"
+    @save_path.setter
+    def save_path(self, value):
+        self._save_path = value
 
+    @property
+    def download_path(self):
+        return self._download_path
 
-print(video.id)
-print(video.title)
-print(video.video_url)
-print(video.thumbnail_url)
-print(video.description)
-print(video.tags)
-print(video.status)
+    @download_path.setter
+    def download_path(self, value):
+        self._download_path = value

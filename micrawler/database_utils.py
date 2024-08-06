@@ -53,3 +53,15 @@ class DatabaseManager:
         with self._get_cursor() as cursor:
             cursor.execute("UPDATE sys_vide SET status = %s WHERE id = %s", (status, id))
             print(f"vide_id {id} 的状态已更新为 {status}。")
+
+    def check_video_id(self, id):
+        try:
+            with self._get_cursor() as cursor:
+                cursor.execute("SELECT COUNT(1) FROM sys_vide WHERE id = %s", (id))
+                if cursor.fetchone()[0]:
+                    print(f"video_id {id} 已存在于数据库中，无需重新插入。")
+                    return True
+                return False
+        except Exception as e:
+            logging.error(f"检查视频 {id} 时出错: {e}")
+            return False

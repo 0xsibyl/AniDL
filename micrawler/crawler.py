@@ -1,3 +1,5 @@
+import logging
+
 from DrissionPage import ChromiumPage
 from DrissionPage._configs.chromium_options import ChromiumOptions
 from urllib.parse import urlparse, parse_qs
@@ -5,10 +7,15 @@ import json
 
 from colorama import Fore, Style
 from prettytable import PrettyTable
+
+from config_loader import load_config
 from database_utils import DatabaseManager
 from vide_data import Video
 from video_downloader import download_video
 from write_json_to_file import write_json_to_file
+
+
+# 加载配置文件
 
 
 def crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, genre, write_to_file):
@@ -61,9 +68,6 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                             result_strings.append(result_string)
 
                         final_result = '\n'.join(result_strings)
-                        print(final_result)
-                        # print(f'番剧标签: {tag.texts()}')
-                        # 这里获取vide——id
                         parsed_url = urlparse(link)
                         query_params = parse_qs(parsed_url.query)
                         idx = query_params.get('v', [''])[0]
@@ -81,37 +85,13 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
 
                         if not download_urls:
                             raise Exception("没有找到合适的下载链接")
-
-                        # if best_quality_link:
-                        #     connection = connect_to_db(database_config)
-                        #     cursor = connection.cursor()
-                        #     save_path = f"{crawler_config['download_path']}/{title}.mp4"
-                        #     download_video(best_quality_link, save_path, idx, crawler_config['max_retries'],
-                        #                    cursor,
-                        #                    connection)  ##这个要写上标签名字
-                        #     cursor.close()
-                        #     connection.close()
-                        # else:
-                        #     connection = connect_to_db(database_config)
-                        #     cursor = connection.cursor()
-                        #     update_video_status(cursor, idx, 2)
-                        #     connection.commit()
-                        #     cursor.close()
-                        #     connection.close()
+                        download_path = crawler_config['download_path'] + '/' + title
                         video_data = Video(id=idx, title=title, video_url=link, thumbnail_url=img,
-                                           description=author.text, tags=final_result, status=1)
+                                           description=author.text, tags=final_result, status=1,
+                                           save_path=download_path, download_path=best_quality_link)
                         crawler_data_send(video_data)
                         fulul_title = f"{title} [v={idx}]"
                         table.add_row([fulul_title, link, img])
-                        # print(Fore.CYAN + Style.BRIGHT + f'番剧名称: {fulul_title}')
-                        # print(f'番剧标签: {best_quality_link}')
-                        # print(f'番剧URL: {link}')
-                        # print(f'图片地址: {img}')
-                        # print('-' * 50)
-                        # 我在在这里进行判断是否没有进行下载
-                        # if check_vide_id(cursor, idx, 1):
-                        #     print(f"番剧 {fulul_title} 已经存在数据库中，跳过下载")
-                        #     continue
 
                         json_data = json.dumps(
                             {"番剧名称": fulul_title, "作者": author.text, "番剧URL": link, "图片地址": img,
@@ -153,19 +133,17 @@ def motion_crawling(base_url, start_page, database_config, crawler_config, write
 
 def crawler_data_send(video_data):
     db_manager = DatabaseManager()
-    if db_manager.check_video(video_data.id, video_data.status):
-        print("此视频已经记录不在进行爬取")
-    else:
-        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        print(video_data.title)
-        print("---------------------------")
-        print(video_data.video_url)
-        print("---------------------------")
-        print(video_data.thumbnail_url)
-        print("---------------------------")
-        print(video_data.tags)
-        print("---------------------------")
-        print(video_data.description)
-        print("****************************")
-        # db_manager.insert_video(video_data.id, video_data.title, video_data.video_url, video_data.thumbnail_url,
-        #                         video_data.description, video_data.tags, video_data.status)
+    config = load_config('micrawler/config.yaml')
+    max_retries = config['crawler']['max_retries']
+
+    try:
+        if db_manager.check_video(video_data.id, video_data.status):
+            logging.info(f"视频 {video_data.id} 已经下载，不进行重复下载。")
+        elif db_manager.check_video_id(video_data.id):
+            download_video(video_data.download_path, video_data.save_path, video_data.id, max_retries)
+        else:
+            db_manager.insert_video(video_data.id, video_data.title, video_data.video_url, video_data.thumbnail_url,
+                                    video_data.description, video_data.tags, 0)
+            download_video(video_data.download_path, video_data.save_path, video_data.id, max_retries)
+    except Exception as e:
+        logging.error(f"处理视频 {video_data.id} 时出错: {e}")
