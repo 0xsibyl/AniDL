@@ -98,7 +98,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                              "下载地址": best_quality_link}, ensure_ascii=False, indent=4)
 
                         if write_to_file:
-                            write_json_to_file(json_data)  ##开启JSON文件
+                            write_json_to_file(json_data, crawler_config['json_file_path']) ##开启JSON文件
                         if write_to_es:
                             es_data = {'title': fulul_title, 'url': link, 'image_url': img}
                             es.index(index='anime_data', body=es_data)
@@ -106,6 +106,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
 
                     except Exception as e:
                         print(f"获取数据时出错: {e}")
+                        logging.error(f"第 {page_number} 页出错: {e}")
 
             else:
                 print('找不到 .home-rows-videos-wrapper' if genre == 'li' else '.row.no-gutter，可能已经是最后一页了。')

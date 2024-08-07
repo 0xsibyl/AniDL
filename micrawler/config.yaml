@@ -28,6 +28,7 @@ crawler:
   start_page: 1
   max_retries: 10
   download_path: 'E:/vide'
+  json_file_path: 'micrawler/json'
 
 program_info:
   name: 'Hanime Crawler'

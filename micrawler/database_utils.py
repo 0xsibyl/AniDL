@@ -1,7 +1,10 @@
+import logging
+
 import pymysql
 from pymysql import MySQLError
 from contextlib import contextmanager
 from micrawler.config_loader import load_config
+
 
 class DatabaseManager:
     def __init__(self, config_file='micrawler/config.yaml'):
@@ -22,14 +25,13 @@ class DatabaseManager:
             connection.commit()
         except MySQLError as e:
             connection.rollback()
-            print(f"数据库操作时发生错误: {e}")
+            logging.error(f"数据库操作时发生错误: {e}")
             raise e
         finally:
             cursor.close()
             connection.close()
 
     def insert_video(self, id, title, video_url, thumbnail_url, description, tags, status):
-        print(title + "这个是数据库的")
         with self._get_cursor() as cursor:
             cursor.execute(
                 "INSERT INTO sys_vide (id, title, video_url, thumbnail_url, description, tags, status) "
@@ -37,7 +39,7 @@ class DatabaseManager:
                 (id, title, video_url, thumbnail_url, description, tags, status)
             )
             if cursor.fetchone() and cursor.fetchone()[0]:
-                print(f"vide_id {id} 已存在于数据库中，跳过下载。")
+                logging.info(f"vide_id {id} 已存在于数据库中，跳过下载。")
                 return True
             return False
 
@@ -45,21 +47,21 @@ class DatabaseManager:
         with self._get_cursor() as cursor:
             cursor.execute("SELECT COUNT(1) FROM sys_vide WHERE id = %s and status = %s", (id, status))
             if cursor.fetchone()[0]:
-                print(f"vide_id {id} 已存在于数据库中，跳过下载。")
+                logging.info(f"vide_id {id} 已存在于数据库中，跳过下载。")
                 return True
             return False
 
     def update_video_status(self, id, status):
         with self._get_cursor() as cursor:
             cursor.execute("UPDATE sys_vide SET status = %s WHERE id = %s", (status, id))
-            print(f"vide_id {id} 的状态已更新为 {status}。")
+            logging.info(f"vide_id {id} 的状态已更新为 {status}。")
 
     def check_video_id(self, id):
         try:
             with self._get_cursor() as cursor:
                 cursor.execute("SELECT COUNT(1) FROM sys_vide WHERE id = %s", (id))
                 if cursor.fetchone()[0]:
-                    print(f"video_id {id} 已存在于数据库中，无需重新插入。")
+                    logging.info(f"vide_id {id} 已存在于数据库中，无需重新插入。")
                     return True
                 return False
         except Exception as e:
