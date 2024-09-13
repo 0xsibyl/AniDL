@@ -85,7 +85,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
 
                         if not download_urls:
                             raise Exception("没有找到合适的下载链接")
-                        download_path = crawler_config['download_path'] + '/' + title
+                        download_path = crawler_config['download_path'] + '/' + title+'.mp4'
                         video_data = Video(id=idx, title=title, video_url=link, thumbnail_url=img,
                                            description=author.text, tags=final_result, status=1,
                                            save_path=download_path, download_path=best_quality_link)
