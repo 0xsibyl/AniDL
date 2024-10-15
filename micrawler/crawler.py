@@ -1,13 +1,8 @@
 import logging
-
-from DrissionPage import ChromiumPage
-from DrissionPage._configs.chromium_options import ChromiumOptions
 from urllib.parse import urlparse, parse_qs
 import json
-
-from colorama import Fore, Style
+from DrissionPage import Chromium, ChromiumOptions
 from prettytable import PrettyTable
-
 from config_loader import load_config
 from database_utils import DatabaseManager
 from vide_data import Video
@@ -21,12 +16,15 @@ from write_json_to_file import write_json_to_file
 def crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, genre, write_to_file):
     # 配置 ChromiumPage
     co = ChromiumOptions().auto_port()
-    page = ChromiumPage(co)
-    page.set.load_mode.eager()
-    page2 = ChromiumPage(co)
-    page2.set.load_mode.eager()
-    page3 = ChromiumPage(co)
-    page3.set.load_mode.eager()
+    browser1 = Chromium(co)
+    browser1.set.load_mode.normal()
+    browser2 = Chromium(co)
+    browser2.set.load_mode.normal()
+    browser3 = Chromium(co)
+    browser3.set.load_mode.normal()
+    page = browser1.latest_tab
+    page2 = browser2.latest_tab
+    page3 = browser3.latest_tab
     table = PrettyTable(["番剧名称", "番剧URL", "图片地址"])
 
     page_number = start_page
@@ -52,7 +50,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                         img = i('t:img').attr('src') if genre == 'li' else \
                             i.ele('.card-mobile-panel inner').eles('t:img')[1].link
                         title = i.text if genre == 'li' else i.ele('.card-mobile-title').text
-                        link = i.href if genre == 'li' else i.ele('t:a').link
+                        link = i.link if genre == 'li' else i.ele('t:a').link
                         page2.get(link)
                         hanime1_div = page2.ele('#content-div').ele('#player-div-wrapper')
                         hanime1_div2 = hanime1_div.eles('.video-details-wrapper video-tags-wrapper')
@@ -85,7 +83,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
 
                         if not download_urls:
                             raise Exception("没有找到合适的下载链接")
-                        download_path = crawler_config['download_path'] + '/' + title+'.mp4'
+                        download_path = crawler_config['download_path'] + '/' + title + '.mp4'
                         video_data = Video(id=idx, title=title, video_url=link, thumbnail_url=img,
                                            description=author.text, tags=final_result, status=1,
                                            save_path=download_path, download_path=best_quality_link)
@@ -98,7 +96,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                              "下载地址": best_quality_link}, ensure_ascii=False, indent=4)
 
                         if write_to_file:
-                            write_json_to_file(json_data, crawler_config['json_file_path']) ##开启JSON文件
+                            write_json_to_file(json_data, crawler_config['json_file_path'])  ##开启JSON文件
                         if write_to_es:
                             es_data = {'title': fulul_title, 'url': link, 'image_url': img}
                             es.index(index='anime_data', body=es_data)

@@ -1,8 +1,5 @@
-import os
+
 import signal
-import sys
-import json
-from datetime import datetime
 from micrawler.config_loader import load_config
 from micrawler.crawler import li_crawling, motion_crawling
 from micrawler.logger_config import configure_logging
