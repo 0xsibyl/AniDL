@@ -1,19 +1,20 @@
 # AniDL
 
-
 ![AniDL Version](https://img.shields.io/badge/AniDL-v1.0-blue)
 ![Dev Version](https://img.shields.io/badge/Dev%20Version-dev-orange)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![GitHub stars](https://img.shields.io/github/stars/0xsibyl/AniDL?style=social)
 
-
 [项目地址](https://github.com/0xsibyl/AniDL)
 
 ## 项目简介
 
-AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资源的获取,但是觉得很麻烦,为什么不能自动化下载这些里番视频,才开发了此项目。
+AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资源的获取,但是觉得很麻烦,为什么不能自动化下载这些视频,才开发了此项目。
+
 ## 版本信息
- - v1.1版本
+
+- v4.0版本
+
 ## 功能特点
 
 - **自动化抓取**：支持从多个网站自动化抓取里番动漫资源。
@@ -28,6 +29,7 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 
 - Python 3.7及以上版本
 - pip 包管理器
+- DrissionPage
 
 ### 安装步骤
 
@@ -55,18 +57,31 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 
 2. 配置文件：
 
-    在 `config.json` 中，你可以设置需要爬取的网站列表、存储路径等参数（v2.0在开发）。
+   在 `config.json` 中，你可以设置需要的参数信息。
 
-    ```json
-    {
-        "websites": [
-            "https://example.com",
-            "https://anotherexample.com"
-        ],
-        "output_format": "csv",
-        "output_path": "./data.log"
-    }
-    ```
+```yaml
+crawler:
+  # 里番资源默认URL，
+  li_default_url: 'https://example.com/search?genre=****'
+  
+  # 2D 动画默认 URL，
+  motion_default_url_2d: 'https://example.com/search?genre=****'
+  
+  # 3D 动画默认 URL，
+  motion_default_url_3d: 'https://example.com/search?genre=****'
+  
+  # 起始页，默认从第 1 页开始爬取
+  start_page: 1
+  
+  # 最大重试次数，默认设置为 10 次
+  max_retries: 10
+  
+  # 下载路径，视频将保存到此目录
+  download_path: 'E:/vide'
+  
+  # 存储 JSON 数据的路径
+  json_file_path: 'micrawler/json'
+```
 
 3. 运行示例：
 
@@ -76,7 +91,7 @@ AniDL是一个开源项目，开发者的初衷是经常去琉璃神社进行资
 
 4. 查看结果：
 
-    爬取的数据将保存在 `data` 文件夹中，可以使用任何文本编辑器或数据分析工具查看。
+   爬取的数据将保存在 `data` 文件夹中，可以使用任何文本编辑器或数据分析工具查看。
 
 ## 文件结构
 
