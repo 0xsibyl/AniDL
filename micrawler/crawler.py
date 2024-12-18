@@ -9,22 +9,14 @@ from vide_data import Video
 from video_downloader import download_video
 from write_json_to_file import write_json_to_file
 
-
 # 加载配置文件
 
 
 def crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, genre, write_to_file):
     # 配置 ChromiumPage
-    co = ChromiumOptions().auto_port()
-    browser1 = Chromium(co)
-    browser1.set.load_mode.normal()
-    browser2 = Chromium(co)
-    browser2.set.load_mode.normal()
-    browser3 = Chromium(co)
-    browser3.set.load_mode.normal()
-    page = browser1.latest_tab
-    page2 = browser2.latest_tab
-    page3 = browser3.latest_tab
+    browser = Chromium()
+    page = browser.latest_tab
+
     table = PrettyTable(["番剧名称", "番剧URL", "图片地址"])
 
     page_number = start_page
@@ -45,20 +37,24 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                     print(f'第 {page_number} 页没有数据，可能已经是最后一页了。')
                     break
 
-                for i in data:
+                for i in data[1:]:
                     try:
                         img = i('t:img').attr('src') if genre == 'li' else \
                             i.ele('.card-mobile-panel inner').eles('t:img')[1].link
                         title = i.text if genre == 'li' else i.ele('.card-mobile-title').text
                         link = i.link if genre == 'li' else i.ele('t:a').link
-                        page2.get(link)
+                        page2=browser.new_tab(link)
                         hanime1_div = page2.ele('#content-div').ele('#player-div-wrapper')
                         hanime1_div2 = hanime1_div.eles('.video-details-wrapper video-tags-wrapper')
                         author = page2.ele('#content-div').ele(
                             '.video-details-wrapper desktop-inline-mobile-block').ele('#video-artist-name')
                         # tags = []
                         result_strings = []
-
+                        print("爬取--的番剧--详情--信息:")
+                        print(f"  Image Source: {img}")
+                        print(f"  Title: {title}")
+                        print(f"  Link: {link}")
+                        print()
                         for tag in hanime1_div2:
                             tags = tag.texts()
                             filtered_tags = [tag for tag in tags if tag not in ('add', 'remove')]
@@ -69,7 +65,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                         parsed_url = urlparse(link)
                         query_params = parse_qs(parsed_url.query)
                         idx = query_params.get('v', [''])[0]
-                        page3.get(f'https://hanime1.me/download?v={idx}')
+                        page3=browser.new_tab(f'https://hanime1.me/download?v={idx}')
                         download_urls = page3.ele('tag:table').eles('tag:a')
                         video_data = {
                             res: k.link for k in download_urls for res in ["1080p", "720p", "480p"]
@@ -105,6 +101,8 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                     except Exception as e:
                         print(f"获取数据时出错: {e}")
                         logging.error(f"第 {page_number} 页出错: {e}")
+                    page2.close()
+                    page3.close()
 
             else:
                 print('找不到 .home-rows-videos-wrapper' if genre == 'li' else '.row.no-gutter，可能已经是最后一页了。')
@@ -114,12 +112,8 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
             break
 
         page_number += 1
-
+    page.close()
     print(table)
-    page.quit()
-    page2.quit()
-    page3.quit()
-
 
 def li_crawling(base_url, start_page, database_config, crawler_config, write_to_es, es, write_to_file):
     crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, 'li', write_to_file)

@@ -1,7 +1,12 @@
+import logging
+
 import requests
 from tqdm import tqdm
 
 from database_utils import DatabaseManager
+
+import requests
+from tqdm import tqdm
 
 
 def download_video(download_link, save_path, vide_id, max_retries):
@@ -31,11 +36,13 @@ def download_video(download_link, save_path, vide_id, max_retries):
                     for data in response.iter_content(chunk_size=1024):
                         file.write(data)
                         bar.update(len(data))
-                    print(f"视频已成功下载并保存到 {save_path}")
 
-                    # 更新视频状态
-                    db_manager.update_video_status(vide_id, 1)
-                    return
+                # 在进度条完成后打印下载完成信息
+                print(f"视频 {vide_id} 已成功下载并保存到 {save_path}")
+
+                # 更新视频状态
+                db_manager.update_video_status(vide_id, 1)
+                return
 
             except requests.exceptions.RequestException as e:
                 print(f"请求错误: {e}")
@@ -45,8 +52,9 @@ def download_video(download_link, save_path, vide_id, max_retries):
                 print(f"文件写入错误: {e}")
                 retries += 1
         else:
-            print(f"视频 {id} 在错误日志中，开始重新下载。")
+            print(f"视频 {vide_id} 在错误日志中，开始重新下载。")
             retries += 1
 
     # 如果到达这里，说明下载失败
-    print(f"视频 {id} 下载失败。")
+    print(f"视频 {vide_id} 下载失败。")
+    logging.ERROR(f"视频 {vide_id} 下载失败。")

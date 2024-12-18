@@ -6,34 +6,29 @@ from datetime import datetime
 
 class CustomTimedRotatingFileHandler(TimedRotatingFileHandler):
     def __init__(self, filename, when='midnight', interval=1, backupCount=0, encoding=None, delay=False, utc=False):
+        # 传入 backupCount=0 表示不备份文件
         super().__init__(filename, when, interval, backupCount, encoding, delay, utc)
 
     def doRollover(self):
         if self.stream:
             self.stream.close()
             self.stream = None
+
         current_time = datetime.now()
         base, ext = os.path.splitext(self.baseFilename)
+        # 使用日期格式来命名日志文件
         new_filename = f"{base}-{current_time.strftime('%Y-%m-%d')}{ext}"
-        if not os.path.exists(self.baseFilename):
-            os.rename(self.baseFilename, new_filename)
-        if self.backupCount > 0:
-            for i in range(self.backupCount - 1, 0, -1):
-                sfn = f"{self.baseFilename}.{i}"
-                dfn = f"{self.baseFilename}.{i + 1}"
-                if os.path.exists(sfn):
-                    if os.path.exists(dfn):
-                        os.remove(dfn)
-                    os.rename(sfn, dfn)
-            dfn = self.baseFilename + ".1"
-            if os.path.exists(dfn):
-                os.remove(dfn)
-            os.rename(self.baseFilename, dfn)
+
+        # 只重命名文件，且不备份
+        if not os.path.exists(new_filename):
+            if os.path.exists(self.baseFilename):
+                os.rename(self.baseFilename, new_filename)
+
         if not self.delay:
             self.stream = self._open()
 
 
-def configure_logging(log_directory, log_file_prefix, log_when, log_interval, log_backup_count):
+def configure_logging(log_directory, log_file_prefix, log_when, log_interval, log_backup_count=0):
     os.makedirs(log_directory, exist_ok=True)
     log_file_path = os.path.join(log_directory, log_file_prefix)
 
