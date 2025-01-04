@@ -1,4 +1,3 @@
-
 import signal
 from micrawler.config_loader import load_config
 from micrawler.crawler import li_crawling, motion_crawling

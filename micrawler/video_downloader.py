@@ -1,10 +1,5 @@
 import logging
-
-import requests
-from tqdm import tqdm
-
 from database_utils import DatabaseManager
-
 import requests
 from tqdm import tqdm
 

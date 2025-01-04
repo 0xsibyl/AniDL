@@ -9,6 +9,7 @@ from vide_data import Video
 from video_downloader import download_video
 from write_json_to_file import write_json_to_file
 
+
 # 加载配置文件
 
 
@@ -16,6 +17,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
     # 配置 ChromiumPage
     browser = Chromium()
     page = browser.latest_tab
+    browser.set.window.hide()
 
     table = PrettyTable(["番剧名称", "番剧URL", "图片地址"])
 
@@ -43,7 +45,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                             i.ele('.card-mobile-panel inner').eles('t:img')[1].link
                         title = i.text if genre == 'li' else i.ele('.card-mobile-title').text
                         link = i.link if genre == 'li' else i.ele('t:a').link
-                        page2=browser.new_tab(link)
+                        page2 = browser.new_tab(link)
                         hanime1_div = page2.ele('#content-div').ele('#player-div-wrapper')
                         hanime1_div2 = hanime1_div.eles('.video-details-wrapper video-tags-wrapper')
                         author = page2.ele('#content-div').ele(
@@ -65,12 +67,15 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
                         parsed_url = urlparse(link)
                         query_params = parse_qs(parsed_url.query)
                         idx = query_params.get('v', [''])[0]
-                        page3=browser.new_tab(f'https://hanime1.me/download?v={idx}')
+                        page3 = browser.new_tab(f'https://hanime1.me/download?v={idx}')
                         download_urls = page3.ele('tag:table').eles('tag:a')
                         video_data = {
-                            res: k.link for k in download_urls for res in ["1080p", "720p", "480p"]
-                            if res in k.link
+                            res: next((k.link for k in download_urls if res in k.link), download_urls[0].link)
+                            for res in ["1080p", "720p", "480p"]
                         }
+                        # 打印第一个链接
+                        first_link = download_urls[0].link if download_urls else None
+                        print("第一个链接:", first_link)
 
                         if not video_data:
                             raise Exception("没有找到可用的高清分辨率下载链接")
@@ -114,6 +119,7 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
         page_number += 1
     page.close()
     print(table)
+
 
 def li_crawling(base_url, start_page, database_config, crawler_config, write_to_es, es, write_to_file):
     crawl_page(base_url, start_page, database_config, crawler_config, write_to_es, es, 'li', write_to_file)

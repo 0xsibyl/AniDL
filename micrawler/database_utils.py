@@ -39,7 +39,7 @@ class DatabaseManager:
                 (id, title, video_url, thumbnail_url, description, tags, status)
             )
             if cursor.fetchone() and cursor.fetchone()[0]:
-                logging.info(f"vide_id {id} 已存在于数据库中，跳过下载。")
+                print(f"vide_id {id} 已存在于数据库中，跳过下载。")
                 return True
             return False
 
@@ -47,21 +47,21 @@ class DatabaseManager:
         with self._get_cursor() as cursor:
             cursor.execute("SELECT COUNT(1) FROM sys_vide WHERE id = %s and status = %s", (id, status))
             if cursor.fetchone()[0]:
-                logging.info(f"vide_id {id} 已存在于数据库中，跳过下载。")
+                print(f"vide_id {id} 已存在于数据库中，跳过下载。")
                 return True
             return False
 
     def update_video_status(self, id, status):
         with self._get_cursor() as cursor:
             cursor.execute("UPDATE sys_vide SET status = %s WHERE id = %s", (status, id))
-            logging.info(f"vide_id {id} 的状态已更新为 {status}。")
+            print(f"vide_id {id} 的状态已更新为 {status}。")
 
     def check_video_id(self, id):
         try:
             with self._get_cursor() as cursor:
                 cursor.execute("SELECT COUNT(1) FROM sys_vide WHERE id = %s", (id))
                 if cursor.fetchone()[0]:
-                    logging.info(f"vide_id {id} 已存在于数据库中，无需重新插入。")
+                    print(f"vide_id {id} 已存在于数据库中，无需重新插入。")
                     return True
                 return False
         except Exception as e:
