@@ -17,7 +17,6 @@ def crawl_page(base_url, start_page, database_config, crawler_config, write_to_e
     # 配置 ChromiumPage
     browser = Chromium()
     page = browser.latest_tab
-    browser.set.window.hide()
 
     table = PrettyTable(["番剧名称", "番剧URL", "图片地址"])
 
