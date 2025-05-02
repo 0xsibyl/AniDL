@@ -27,10 +27,10 @@ crawler:
   motion_default_url_3d: 'https://hanime1.me/search?genre=3D%E5%8B%95%E7%95%AB'
   start_page: 1
   max_retries: 10
-  download_path: 'E:/vide'
-  json_file_path: 'micrawler/json'
+  download_path: 'E:/vide'  # 下载路径
+  json_file_path: 'micrawler/json' #默认即可
 
 program_info:
   name: 'Hanime Crawler'
-  version: '1.0.0'
+  version: '2.0.0'
   author: 'S^^K'
